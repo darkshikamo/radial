@@ -12,8 +12,6 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
 
-#include "RBFinterpolation.hpp"
-
 // g++ -Wall main.cpp -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_calib3d -o radial
 
 
@@ -246,49 +244,6 @@ void fillHoles(cv::Mat &map){
 }
 
 //////////////////////////////////////////////////////////////////////////////////
-void rbfFillHoles(cv::Mat &mapX, cv::Mat &mapY){
-
-	uint width  = mapX.size().width;
-	uint height = mapX.size().height;
-
-	std::vector<cv::Point2f> pointList;
-	std::vector<float> pointValuesX,pointValuesY;
-
-	// fill the list with known data
-	for(uint x=0; x<width; ++x)
-      for(uint y=0; y<height; ++y){
-
-        // find known data
-        if(mapX.at<float>(y,x) != 0 || mapY.at<float>(y,x) != 0){ // this may not be a hole
-        	pointList.push_back(cv::Point2f(x,y));
-        	pointValuesX.push_back(mapX.at<float>(y,x));
-        	pointValuesY.push_back(mapY.at<float>(y,x));
-		}
-	  }
-	 std::cout << "      " << pointList.size() << " points" << std::endl;
-
-	// rbf
-	RBFinterpolation rbfX(pointList, pointValuesX);
-	RBFinterpolation rbfY(pointList, pointValuesY);
-
- 	// fill the holes
-	for(uint x=0; x<width; ++x)
-      for(uint y=0; y<height; ++y){
-
-        // find known data
-        if(mapX.at<float>(y,x) == 0 && mapY.at<float>(y,x) == 0){ // this may be a hole
-        	cv::Point2f pt(x,y);
-        	mapX.at<float>(y,x) = rbfX.interpolation(pt);
-        	mapY.at<float>(y,x) = rbfY.interpolation(pt);
-
-        	mapX.at<float>(y,x) = std::min( std::max(mapX.at<float>(y,x),0.0f), width-1.0f);
-        	mapY.at<float>(y,x) = std::min( std::max(mapY.at<float>(y,x),0.0f), height-1.0f);
-		}	
-	  }
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////
 void saveMatrix(const std::string filename, const cv::Mat A){
 
     std::ofstream fout(filename.c_str());
@@ -513,7 +468,6 @@ int main(void)
 
   // fill holes
   //std::cout << "   fill the holes ..." << std::endl;
-  //rbfFillHoles(displacementMapX,displacementMapY);
   //fillHoles(displacementMapX);
   //fillHoles(displacementMapY);
   saveMatrix("output/mapX.txt", displacementMapX);

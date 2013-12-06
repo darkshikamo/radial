@@ -3,7 +3,7 @@ CFLAGS   = -Wall -O2 -g
 LIB      = -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_calib3d
 INCLUDES = 
 CXXFLAGS += $(INCLUDES)
-OBJ      = main.o RBFinterpolation.o
+OBJ      = main.o
 RM       = rm -f
 BIN      = radial
 DIRNAME  = $(shell basename $$PWD)
@@ -18,12 +18,7 @@ $(BIN) : $(OBJ)
 	@echo "                 to execute type: ./$(BIN) &"
 	@echo "--------------------------------------------------------------"
 
-RBFinterpolation.o : RBFinterpolation.cpp RBFinterpolation.hpp
-	@echo "compile RBFinterpolation"
-	$(CXX) $(CXXFLAGS) -c $<  
-	@echo "done..."
-
-main.o : main.cpp RBFinterpolation.o
+main.o : main.cpp
 	@echo "compile main"
 	$(CXX) $(CXXFLAGS) -c $<  
 	@echo "done..."
