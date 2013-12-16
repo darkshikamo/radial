@@ -42,6 +42,9 @@ void addGridPoints(std::vector< pixelConstraint > &nodes, cv::Mat &image, const 
     cv::Size boardSize(chessboardNbCorners,chessboardNbCorners);             // number of corners on the chessboard
     bool found = cv::findChessboardCorners(image,boardSize, imageCorners);   // Get the chessboard corners
 
+    // if(!found) for(uint i=0; i<imageCorners.size();++i)
+    // 	std::cout << imageCorners[i] << std::endl;
+
     if(!found) return;
 
     cv::drawChessboardCorners(image, boardSize, imageCorners,found);         // Draw the corners if found
